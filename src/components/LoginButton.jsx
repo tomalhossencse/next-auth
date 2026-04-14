@@ -1,9 +1,10 @@
 "use client";
+import { signIn } from "next-auth/react";
 import React from "react";
 
 const LoginButton = () => {
   return (
-    <button onClick={() => alert("clicked")} className="btn">
+    <button onClick={() => signIn()} className="btn">
       Login Now
     </button>
   );
