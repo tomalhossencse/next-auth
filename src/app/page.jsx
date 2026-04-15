@@ -8,10 +8,11 @@ import UserCard from "@/components/UserCard";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import AuthButtons from "@/components/AuthButtons";
+import Container from "@/components/Container";
 export default async function Home() {
   const session = await getServerSession(authOptions);
   return (
-    <div className="min-h-screen relative flex flex-col justify-center items-center gap-5 ">
+    <Container className="min-h-screen relative flex flex-col justify-center items-center gap-5 ">
       <UserCard />
       <div className=" flex gap-5 space-x-4 items-center">
         <FaReact
@@ -33,6 +34,6 @@ export default async function Home() {
       </div>
 
       <AuthButtons />
-    </div>
+    </Container>
   );
 }
