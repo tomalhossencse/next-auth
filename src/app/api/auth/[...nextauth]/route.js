@@ -2,6 +2,8 @@ import { dbConnect } from "@/lib/dbConnect";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
+
 import bcrypt from "bcryptjs";
 
 const userList = [
@@ -9,6 +11,8 @@ const userList = [
   { name: "jamal", password: "5678" },
   { name: "kamal", password: "9012" },
 ];
+
+const userCollection = dbConnect("users");
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -35,7 +39,6 @@ export const authOptions = {
       async authorize(credentials, req) {
         const { email, password } = credentials;
         // const user = userList.find((u) => u.name === username);
-        const userCollection = dbConnect("users");
         const user = await userCollection.findOne({ email });
         if (!user) return null;
         const isPasswordOk = await bcrypt.compare(password, user?.password);
@@ -50,10 +53,38 @@ export const authOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
+
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    }),
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      return true;
+      // console.log({ user, account, profile, email, credentials });
+
+      try {
+        const payload = {
+          ...user,
+          provider: account.provider,
+          providerId: account.providerAccountId,
+          role: "user",
+          createdAt: new Date().toISOString(),
+        };
+
+        if (!user?.email) {
+          return false;
+        }
+
+        const isExistUser = await userCollection.findOne({ email: user.email });
+
+        if (!isExistUser) {
+          const result = await userCollection.insertOne(payload);
+        }
+        return true;
+      } catch (error) {
+        return false;
+      }
     },
     // async redirect({ url, baseUrl }) {
     //   return baseUrl;
