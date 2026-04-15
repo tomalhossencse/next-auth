@@ -9,6 +9,7 @@ const UserCard = () => {
   if (session)
     return (
       <>
+        <p>Use client</p>
         Signed as {session?.user?.name}
         <Image
           width={500}
@@ -17,18 +18,14 @@ const UserCard = () => {
           src={session?.user?.image}
           alt="user-image"
         />
-        <br />
-        <button className="btn" onClick={() => signOut()}>
-          sign out
-        </button>
       </>
     );
   return (
     <div>
-      Not signed in <br />
+      {/* Not signed in <br />
       <button className="btn" onClick={() => signIn()}>
         Sign in
-      </button>
+      </button> */}
       {/* <h2 className="font-bold ">use-clinet</h2> */}
       {/* <div className="border-2 p-4 rounded-2xl">{JSON.stringify(session)}</div> */}
     </div>
